@@ -1,0 +1,64 @@
+
+​
+# Install required libraries
+!pip install transformers torch gradio
+
+
+# Import necessary libraries
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
+import gradio as gr
+
+# Load the model and tokenizer from Hugging Face
+model_name = "nomic-ai/nomic-embed-text-v2-moe"  # Example model, you can choose the variant you want (small/medium/large)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16)
+
+# Ensure the model runs on GPU (if available)
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model.to(device)
+
+# Define the function for generating code
+def generate_code(prompt):
+    # Tokenize the input prompt
+    inputs = tokenizer(prompt, return_tensors="pt").to(device)
+
+    # Generate code (you can tweak max_length and temperature for different behavior)
+    outputs = model.generate(inputs["input_ids"], max_length=200, num_return_sequences=1, temperature=0.7)
+
+    # Decode and return the generated code
+    generated_code = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return generated_code
+
+# Create a simple Gradio interface for the code generator
+iface = gr.Interface(
+    fn=generate_code,
+    inputs="text",
+    outputs="text",
+    title="CodeLlama AI Code Generator",
+    description="Enter a programming prompt, and the model will generate corresponding code for you."
+)
+
+# Launch the web interface
+iface.launch()
+
+
+[Draft]
+
+
+
+
+[Draft]
+
+
+
+
+[Draft]
+
+
+
+
+Bathula Shivathmika
+​
+bhukyapriyanka520@gmail.com
+​
